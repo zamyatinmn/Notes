@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Notes</string>
+
+    <string-array name="cities">
+        <item>Заметочки</item>
+        <item>Заметочки</item>
+        <item>Заметочки</item>
+        <item>Заметочки</item>
+        <item>Заметочки</item>
+    </string-array>
+</resources>
