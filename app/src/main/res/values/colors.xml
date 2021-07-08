@@ -7,4 +7,29 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="amber">#FCC203</color>
+    <color name="neon_carrot">#FC9342</color>
+    <color name="starship">#D0F53D</color>
+    <color name="green_yellow">#90F53D</color>
+    <color name="screamin_green">#3DF580</color>
+    <color name="turquoise">#3DF5D6</color>
+    <color name="dodger_blue">#3D8AF5</color>
+    <color name="purple_heart">#623DF5</color>
+    <color name="heliotrope">#B23DF5</color>
+    <color name="razzle_dazzle_rose">#F53DEF</color>
+
+    <array name="colors">
+        <item>@color/amber</item>
+        <item>@color/neon_carrot</item>
+        <item>@color/starship</item>
+        <item>@color/green_yellow</item>
+        <item>@color/screamin_green</item>
+        <item>@color/turquoise</item>
+        <item>@color/dodger_blue</item>
+        <item>@color/purple_heart</item>
+        <item>@color/heliotrope</item>
+        <item>@color/razzle_dazzle_rose</item>
+    </array>
+
 </resources>

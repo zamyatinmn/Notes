@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.Calendar;
+import java.util.Random;
 
 public class CurrentNoteFragment extends Fragment {
 
@@ -48,6 +50,7 @@ public class CurrentNoteFragment extends Fragment {
 //            date.setText(args.getString(KEY_DATE));
 //            text.setText(args.getString(KEY_TEXT));
         }
+        index = Note.current;
     }
 
     @SuppressLint("ResourceAsColor")
@@ -55,9 +58,11 @@ public class CurrentNoteFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.note, container, false);
-        view.setBackgroundColor(R.color.teal_700);
 
-        Note note = new Note("Hello world", "azazazazaazzazzzaazzazazaazazza");
+        int[] colors = getResources().getIntArray(R.array.colors);
+        Note note = Note.saved.get(index);
+        view.setBackgroundColor(colors[note.color]);
+
         title = view.findViewById(R.id.title_note);
         title.setText(note.getTitle());
         date = view.findViewById(R.id.date_note);
