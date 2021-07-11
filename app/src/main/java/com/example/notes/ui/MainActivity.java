@@ -1,5 +1,8 @@
 package com.example.notes.ui;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,11 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.widget.Toast;
-
-import com.example.notes.Note;
 import com.example.notes.R;
 import com.google.android.material.navigation.NavigationView;
 
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, ListOfNotesFragment.newInstance());
-        fragmentTransaction.replace(R.id.fragment_container2, CurrentNoteFragment.newInstance(Note.current));
+        fragmentTransaction.replace(R.id.fragment_container2, CurrentNoteFragment.newInstance(0));
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
@@ -62,17 +60,11 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-            switch (id) {
-                case R.id.menu_about:
-                    Toast.makeText(MainActivity.this, "about", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.menu_add:
-                    Toast.makeText(MainActivity.this, "add", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.menu_search:
-                    Toast.makeText(MainActivity.this, "search", Toast.LENGTH_SHORT).show();
-                    return true;
+            if (item.getItemId() == R.id.menu_list) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                        , ListOfNotesFragment.newInstance()).commit();
+                drawer.closeDrawers();
+                return true;
             }
             return false;
         });

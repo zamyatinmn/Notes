@@ -1,10 +1,13 @@
 package com.example.notes.ui;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -14,21 +17,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.notes.Note;
+import com.example.notes.App;
+import com.example.notes.data.Note;
 import com.example.notes.R;
 
 import java.util.Calendar;
+import java.util.Random;
 
 public class CurrentNoteFragment extends Fragment {
-
-    private final String KEY_TITLE = "key_title";
-    private final String KEY_DATE = "key_date";
-    private final String KEY_TEXT = "key_text";
 
     private EditText title;
     private TextView date;
     private EditText text;
-    private Calendar dateAndTime = Calendar.getInstance();
+    private final Calendar dateAndTime = Calendar.getInstance();
     public static final String KEY_INDEX = "index";
     private int index;
     private Note note;
@@ -48,32 +49,38 @@ public class CurrentNoteFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             index = args.getInt(KEY_INDEX);
-            Note.current = index;
         }
+        setHasOptionsMenu(true);
     }
 
-    @SuppressLint("ResourceAsColor")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.current_note, container, false);
 
         int[] colors = getResources().getIntArray(R.array.colors);
-        note = Note.saved.get(index);
+        App app = (App) requireActivity().getApplication();
+        note = app.notesSource.getNote(index);
         view.setBackgroundColor(colors[note.color]);
 
         title = view.findViewById(R.id.title_note);
         title.setText(note.getTitle());
         date = view.findViewById(R.id.date_note);
         date.setText(note.getCreationDate());
-
         date.setOnClickListener(view1 ->
                 setDate()
         );
-
         text = view.findViewById(R.id.text_note);
         text.setText(note.getText());
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        note.setTitle(title.getText().toString());
+        note.setCreationDate(date.getText().toString());
+        note.setText(text.getText().toString());
     }
 
     private void setDate() {
@@ -92,16 +99,32 @@ public class CurrentNoteFragment extends Fragment {
     };
 
     private void setInitialDateTime() {
-        date.setText(DateUtils.formatDateTime(requireContext(),
+        String newDate = DateUtils.formatDateTime(requireContext(),
                 dateAndTime.getTimeInMillis(),
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR));
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
+        date.setText(newDate);
+        note.setCreationDate(newDate);
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        note.setTitle(title.getText().toString());
-        note.setCreationDate(date.getText().toString());
-        note.setText(text.getText().toString());
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.note_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_change_color) {
+            note.setColor(new Random().nextInt(10));
+            boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+            if (isLandscape) {
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container2
+                        , newInstance(index)).commit();
+            } else {
+                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container
+                        , newInstance(index)).commit();
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

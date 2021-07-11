@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/card_margin"
     android:layout_marginTop="@dimen/card_margin"
     android:layout_marginEnd="@dimen/card_margin"
-    android:layout_marginBottom="@dimen/card_margin">
+    android:layout_marginBottom="@dimen/card_margin"
+    app:cardBackgroundColor="@color/heliotrope"
+    app:cardCornerRadius="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
