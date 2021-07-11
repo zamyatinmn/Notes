@@ -1,10 +1,9 @@
-package com.example.notes;
+package com.example.notes.ui;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.notes.Note;
+import com.example.notes.R;
+
 import java.util.Calendar;
-import java.util.Random;
 
 public class CurrentNoteFragment extends Fragment {
 
@@ -30,6 +31,7 @@ public class CurrentNoteFragment extends Fragment {
     private Calendar dateAndTime = Calendar.getInstance();
     public static final String KEY_INDEX = "index";
     private int index;
+    private Note note;
 
 
     public static CurrentNoteFragment newInstance(int index) {
@@ -46,21 +48,18 @@ public class CurrentNoteFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             index = args.getInt(KEY_INDEX);
-//            title.setText(args.getString(KEY_TITLE));
-//            date.setText(args.getString(KEY_DATE));
-//            text.setText(args.getString(KEY_TEXT));
+            Note.current = index;
         }
-        index = Note.current;
     }
 
     @SuppressLint("ResourceAsColor")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.note, container, false);
+        View view = inflater.inflate(R.layout.current_note, container, false);
 
         int[] colors = getResources().getIntArray(R.array.colors);
-        Note note = Note.saved.get(index);
+        note = Note.saved.get(index);
         view.setBackgroundColor(colors[note.color]);
 
         title = view.findViewById(R.id.title_note);
@@ -101,8 +100,8 @@ public class CurrentNoteFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(KEY_TITLE, title.getText().toString());
-        outState.putString(KEY_DATE, date.getText().toString());
-        outState.putString(KEY_TEXT, text.getText().toString());
+        note.setTitle(title.getText().toString());
+        note.setCreationDate(date.getText().toString());
+        note.setText(text.getText().toString());
     }
 }
