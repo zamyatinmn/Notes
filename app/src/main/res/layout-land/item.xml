@@ -7,12 +7,13 @@
     android:layout_marginTop="@dimen/card_margin"
     android:layout_marginEnd="@dimen/card_margin"
     android:layout_marginBottom="@dimen/card_margin"
-    app:cardBackgroundColor="@color/heliotrope"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="@dimen/card_corner_radius"
+    app:cardElevation="@dimen/card_elevation">
 
     <LinearLayout
+        android:id="@+id/linear"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/card_height"
         android:orientation="vertical">
 
         <TextView

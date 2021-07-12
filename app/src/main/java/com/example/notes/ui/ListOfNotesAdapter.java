@@ -53,7 +53,7 @@ public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Note currentNote = dataSource.getNote(position);
         int[] colors = holder.itemView.getResources().getIntArray(R.array.colors);
-        holder.itemView.setBackgroundColor(colors[currentNote.color]);
+        holder.getLinear().setBackgroundColor(colors[currentNote.color]);
         holder.getTitle().setText(currentNote.getTitle());
         holder.getDate().setText(currentNote.getCreationDate());
         holder.getText().setText(currentNote.getText());
