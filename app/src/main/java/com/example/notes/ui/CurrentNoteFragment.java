@@ -3,7 +3,6 @@ package com.example.notes.ui;
 import android.app.DatePickerDialog;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,10 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.notes.App;
-import com.example.notes.data.Note;
 import com.example.notes.R;
+import com.example.notes.data.Note;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Random;
 
 public class CurrentNoteFragment extends Fragment {
@@ -99,9 +100,8 @@ public class CurrentNoteFragment extends Fragment {
     };
 
     private void setInitialDateTime() {
-        String newDate = DateUtils.formatDateTime(requireContext(),
-                dateAndTime.getTimeInMillis(),
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        String newDate = format.format(dateAndTime.getTimeInMillis());
         date.setText(newDate);
         note.setCreationDate(newDate);
     }
