@@ -9,10 +9,19 @@ import java.util.Locale;
 import java.util.Random;
 
 public class Note {
+    private String id;
     private String title;
     private String creationDate;
     private String text;
     public int color;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Note(String title, String text) {
         this.title = title;

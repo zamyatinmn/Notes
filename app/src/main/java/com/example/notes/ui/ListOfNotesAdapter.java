@@ -21,8 +21,9 @@ public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
     private RegisterViewListener viewListener;
     private int position = 0;
 
-    public ListOfNotesAdapter(INotesSource dataSource) {
+    public void setDataSource(INotesSource dataSource){
         this.dataSource = dataSource;
+        notifyDataSetChanged();
     }
 
     public int getPosition() {

@@ -3,11 +3,15 @@ package com.example.notes.data;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoteSource implements INotesSource {
-    public static List<Note> dataSource;
+public class NoteSourceSupernova implements INotesSource {
+    private List<Note> dataSource;
 
-    public NoteSource() {
+    public NoteSourceSupernova() {
         dataSource = new ArrayList<>();
+    }
+
+    @Override
+    public INotesSource init(NoteSourceResponse response) {
         dataSource.add(new Note("Заметка 1", "Заметка разразразраз"));
         dataSource.add(new Note("Заметка 2", "Заметка двадвадвадва"));
         dataSource.add(new Note("Заметка 3", "Заметка тритритритри"));
@@ -17,6 +21,11 @@ public class NoteSource implements INotesSource {
         dataSource.add(new Note("Заметка 7", "Заметка семьсемьсемь"));
         dataSource.add(new Note("Заметка 8", "Заметка восемьвосемь"));
         dataSource.add(new Note("Заметка 9", "Заметка девятьдевять"));
+
+        if (response != null){
+            response.initialized(this);
+        }
+        return this;
     }
 
     @Override
@@ -37,5 +46,10 @@ public class NoteSource implements INotesSource {
     @Override
     public Note getNote(int position) {
         return dataSource.get(position);
+    }
+
+    @Override
+    public void update(int position, Note note) {
+
     }
 }

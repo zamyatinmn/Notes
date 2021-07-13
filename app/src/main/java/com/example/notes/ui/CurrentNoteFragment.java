@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.notes.App;
 import com.example.notes.R;
+import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +35,7 @@ public class CurrentNoteFragment extends Fragment {
     public static final String KEY_INDEX = "index";
     private int index;
     private Note note;
+    private INotesSource data;
 
 
     public static CurrentNoteFragment newInstance(int index) {
@@ -61,7 +63,8 @@ public class CurrentNoteFragment extends Fragment {
 
         int[] colors = getResources().getIntArray(R.array.colors);
         App app = (App) requireActivity().getApplication();
-        note = app.notesSource.getNote(index);
+        data = app.notesSource;
+        note = data.getNote(index);
         view.setBackgroundColor(colors[note.color]);
 
         title = view.findViewById(R.id.title_note);
@@ -82,6 +85,7 @@ public class CurrentNoteFragment extends Fragment {
         note.setTitle(title.getText().toString());
         note.setCreationDate(date.getText().toString());
         note.setText(text.getText().toString());
+        data.update(index, note);
     }
 
     private void setDate() {

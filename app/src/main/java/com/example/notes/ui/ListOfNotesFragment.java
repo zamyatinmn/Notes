@@ -21,6 +21,8 @@ import com.example.notes.App;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
 import com.example.notes.R;
+import com.example.notes.data.NoteSourceFirebase;
+import com.example.notes.data.NoteSourceResponse;
 
 public class ListOfNotesFragment extends Fragment {
 
@@ -44,6 +46,12 @@ public class ListOfNotesFragment extends Fragment {
         animator.setAddDuration(1000);
         animator.setRemoveDuration(1000);
         recyclerView.setItemAnimator(animator);
+
+        noteSource = new NoteSourceFirebase()
+                .init(cardsData -> adapter.notifyDataSetChanged());
+
+        ((App) requireActivity().getApplication()).notesSource = noteSource;
+        adapter.setDataSource(noteSource);
         return view;
     }
 
@@ -53,9 +61,9 @@ public class ListOfNotesFragment extends Fragment {
         setHasOptionsMenu(true);
         layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
-        App app = (App) requireActivity().getApplication();
-        noteSource = app.notesSource;
-        adapter = new ListOfNotesAdapter(noteSource);
+//        App app = (App) requireActivity().getApplication();
+//        noteSource = app.notesSource;
+        adapter = new ListOfNotesAdapter();
         boolean isLandscape = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE;
         adapter.setRegisterViewListener(this::registerForContextMenu);
@@ -73,6 +81,7 @@ public class ListOfNotesFragment extends Fragment {
                         .commit();
             }
         });
+
         recyclerView.setAdapter(adapter);
     }
 
