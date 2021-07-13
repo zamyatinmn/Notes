@@ -1,17 +1,12 @@
 package com.example.notes.data;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 public class Note {
     private String id;
     private String title;
-    private String creationDate;
+    private Date creationDate;
     private String text;
     public int color;
 
@@ -26,9 +21,7 @@ public class Note {
     public Note(String title, String text) {
         this.title = title;
         this.text = text;
-        Date currentDate = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        creationDate = dateFormat.format(currentDate);
+        creationDate = new Date();
         color = new Random().nextInt(10);
     }
 
@@ -36,7 +29,7 @@ public class Note {
         return title;
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
@@ -48,7 +41,7 @@ public class Note {
         this.title = title;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 

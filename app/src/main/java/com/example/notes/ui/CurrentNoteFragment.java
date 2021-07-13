@@ -21,6 +21,7 @@ import com.example.notes.R;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -58,7 +59,9 @@ public class CurrentNoteFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.current_note, container, false);
 
         int[] colors = getResources().getIntArray(R.array.colors);
@@ -70,7 +73,8 @@ public class CurrentNoteFragment extends Fragment {
         title = view.findViewById(R.id.title_note);
         title.setText(note.getTitle());
         date = view.findViewById(R.id.date_note);
-        date.setText(note.getCreationDate());
+        date.setText(new SimpleDateFormat("dd.MM.yyyy",
+                Locale.getDefault()).format(note.getCreationDate()));
         date.setOnClickListener(view1 ->
                 setDate()
         );
@@ -83,7 +87,12 @@ public class CurrentNoteFragment extends Fragment {
     public void onPause() {
         super.onPause();
         note.setTitle(title.getText().toString());
-        note.setCreationDate(date.getText().toString());
+        try {
+            note.setCreationDate(new SimpleDateFormat("dd.MM.yyyy",
+                    Locale.getDefault()).parse(date.getText().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         note.setText(text.getText().toString());
         data.update(index, note);
     }
@@ -107,7 +116,7 @@ public class CurrentNoteFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         String newDate = format.format(dateAndTime.getTimeInMillis());
         date.setText(newDate);
-        note.setCreationDate(newDate);
+        note.setCreationDate(dateAndTime.getTime());
     }
 
     @Override
@@ -120,7 +129,8 @@ public class CurrentNoteFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_change_color) {
             note.setColor(new Random().nextInt(10));
-            boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+            boolean isLandscape = getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_LANDSCAPE;
             if (isLandscape) {
                 getParentFragmentManager().beginTransaction().replace(R.id.fragment_container2
                         , newInstance(index)).commit();

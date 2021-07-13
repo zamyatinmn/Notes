@@ -1,6 +1,7 @@
 package com.example.notes.data;
 
-import java.sql.Timestamp;
+import com.google.firebase.Timestamp;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,9 +15,10 @@ public class NoteDataMapping {
     public static Note toNote(String id, Map<String, Object> document) {
         String title = (String) document.get(Fields.TITLE);
         String text = (String) document.get(Fields.TEXT);
-        String date = (String) document.get(Fields.DATE);
+        Timestamp date = (Timestamp) document.get(Fields.DATE);
         Note note = new Note(title, text);
-        note.setCreationDate(date);
+        assert date != null;
+        note.setCreationDate(date.toDate());
         note.setId(id);
         return note;
     }

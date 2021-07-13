@@ -13,6 +13,9 @@ import com.example.notes.RegisterViewListener;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private INotesSource dataSource;
@@ -56,7 +59,7 @@ public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
         int[] colors = holder.itemView.getResources().getIntArray(R.array.colors);
         holder.getLinear().setBackgroundColor(colors[currentNote.color]);
         holder.getTitle().setText(currentNote.getTitle());
-        holder.getDate().setText(currentNote.getCreationDate());
+        holder.getDate().setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(currentNote.getCreationDate()));
         holder.getText().setText(currentNote.getText());
         holder.itemView.setOnLongClickListener(view -> {
             setPosition(position);

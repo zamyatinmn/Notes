@@ -18,11 +18,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notes.App;
+import com.example.notes.R;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
-import com.example.notes.R;
 import com.example.notes.data.NoteSourceFirebase;
-import com.example.notes.data.NoteSourceResponse;
 
 public class ListOfNotesFragment extends Fragment {
 
