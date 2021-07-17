@@ -4,6 +4,8 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +13,22 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notes.ListOfNotesAdapter;
+import com.example.notes.App;
+import com.example.notes.data.INotesSource;
+import com.example.notes.data.Note;
 import com.example.notes.R;
-import com.example.notes.RegisterViewListener;
 
 public class ListOfNotesFragment extends Fragment {
 
     private static final int MENU_DELETE = 123;
+    private ListOfNotesAdapter adapter;
+    private INotesSource noteSource;
+    private GridLayoutManager layoutManager;
+    private RecyclerView recyclerView;
 
     public static ListOfNotesFragment newInstance() {
         return new ListOfNotesFragment();
@@ -32,14 +40,22 @@ public class ListOfNotesFragment extends Fragment {
         View view = inflater.inflate(R.layout.list_of_notes, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         initRecyclerView(recyclerView);
+        DefaultItemAnimator animator = new DefaultItemAnimator();
+        animator.setAddDuration(1000);
+        animator.setRemoveDuration(1000);
+        recyclerView.setItemAnimator(animator);
         return view;
     }
 
     private void initRecyclerView(RecyclerView recyclerView) {
         recyclerView.setHasFixedSize(true);
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        this.recyclerView = recyclerView;
+        setHasOptionsMenu(true);
+        layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
-        ListOfNotesAdapter adapter = new ListOfNotesAdapter();
+        App app = (App) requireActivity().getApplication();
+        noteSource = app.notesSource;
+        adapter = new ListOfNotesAdapter(noteSource);
         boolean isLandscape = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE;
         adapter.setRegisterViewListener(this::registerForContextMenu);
@@ -69,8 +85,38 @@ public class ListOfNotesFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == MENU_DELETE) {
-            Toast.makeText(requireContext(), "note deleted", Toast.LENGTH_SHORT).show();
+            noteSource.remove(adapter.getPosition());
+//            Если использовать этот метод, позиции оставшихся вьюх не пересчитываются
+//            попадаю на OutOfBound
+//            adapter.notifyItemRemoved(adapter.getPosition());
+            adapter.notifyDataSetChanged();
         }
         return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_add:
+                noteSource.add(new Note("Новая заметка", "Текст новой заметки"));
+                adapter.notifyItemInserted(noteSource.size());
+                recyclerView.smoothScrollToPosition(noteSource.size() - 1);
+                break;
+            case R.id.menu_search:
+                Toast.makeText(requireContext(), "search", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            case R.id.menu_about:
+                Toast.makeText(requireContext(), "about", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

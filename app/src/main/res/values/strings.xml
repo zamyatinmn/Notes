@@ -10,5 +10,7 @@
     <string name="title_example">Заголовок</string>
     <string name="date_example">30.06.2021</string>
     <string name="text_example">Умные умные мысли их у меня много, не знаю даже где их оставить, положу, пожайлуй, здесь</string>
+    <string name="list">Список заметок</string>
+    <string name="change_color">Изменить цвет</string>
 
 </resources>
