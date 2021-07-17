@@ -22,10 +22,12 @@ import com.example.notes.App;
 import com.example.notes.DataChangedListener;
 import com.example.notes.R;
 import com.example.notes.data.INotesSource;
+import com.example.notes.data.Note;
 import com.example.notes.data.NoteSourceFirebase;
 
 public class ListOfNotesFragment extends Fragment {
 
+    private static final int MENU_CHANGE_COLOR = 321;
     private static final int MENU_DELETE = 123;
     public static final String INDEX_KEY = "index";
     private static final String TAG_EDIT_NOTE = "TAG_EDIT_NOTE";
@@ -96,17 +98,25 @@ public class ListOfNotesFragment extends Fragment {
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v
             , ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, MENU_DELETE, 0, "delete");
+        menu.add(0, MENU_CHANGE_COLOR, 0, "change color");
+        menu.add(0, MENU_DELETE, 1, "delete");
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == MENU_DELETE) {
-            DialogFragment dialog = new DeleteDialog();
-            Bundle bundle = new Bundle();
-            bundle.putInt(INDEX_KEY, adapter.getPosition());
-            dialog.setArguments(bundle);
-            dialog.show(getParentFragmentManager(), TAG_DELETE);
+        switch (item.getItemId()){
+            case MENU_CHANGE_COLOR:
+                Note note = noteSource.getNote(adapter.getPosition());
+                note.newColor();
+                noteSource.update(adapter.getPosition(), note);
+                break;
+            case MENU_DELETE:
+                DialogFragment dialog = new DeleteDialog();
+                Bundle bundle = new Bundle();
+                bundle.putInt(INDEX_KEY, adapter.getPosition());
+                dialog.setArguments(bundle);
+                dialog.show(getParentFragmentManager(), TAG_DELETE);
+                break;
         }
         return super.onContextItemSelected(item);
     }
