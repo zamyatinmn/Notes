@@ -1,4 +1,4 @@
-package com.example.notes.ui;
+package com.example.notes.ui.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -17,6 +17,7 @@ import com.example.notes.App;
 import com.example.notes.R;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
+import com.example.notes.ui.list.ListOfNotesFragment;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

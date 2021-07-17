@@ -1,5 +1,6 @@
-package com.example.notes.data;
+package com.example.notes.data.firebase;
 
+import com.example.notes.data.Note;
 import com.google.firebase.Timestamp;
 
 import java.util.HashMap;

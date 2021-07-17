@@ -1,6 +1,6 @@
 package com.example.notes.data;
 
-import com.example.notes.DataChangedListener;
+import com.example.notes.data.firebase.NoteSourceResponse;
 
 import java.util.ArrayList;
 import java.util.List;

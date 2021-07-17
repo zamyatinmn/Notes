@@ -1,6 +1,8 @@
-package com.example.notes.data;
+package com.example.notes.data.firebase;
 
-import com.example.notes.DataChangedListener;
+import com.example.notes.data.DataChangedListener;
+import com.example.notes.data.INotesSource;
+import com.example.notes.data.Note;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;

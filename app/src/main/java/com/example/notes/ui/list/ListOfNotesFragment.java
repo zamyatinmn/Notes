@@ -1,7 +1,6 @@
-package com.example.notes.ui;
+package com.example.notes.ui.list;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,11 +18,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notes.App;
-import com.example.notes.DataChangedListener;
+import com.example.notes.data.DataChangedListener;
 import com.example.notes.R;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
-import com.example.notes.data.NoteSourceFirebase;
+import com.example.notes.data.firebase.NoteSourceFirebase;
+import com.example.notes.ui.dialogs.DeleteDialog;
+import com.example.notes.ui.dialogs.EditNoteDialogFragment;
 
 public class ListOfNotesFragment extends Fragment {
 

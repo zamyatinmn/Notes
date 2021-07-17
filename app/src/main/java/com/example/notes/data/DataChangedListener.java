@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.example.notes.data;
 
 public interface DataChangedListener {
     void onDataAdd(int position);
