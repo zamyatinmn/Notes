@@ -34,7 +34,6 @@ public class ListOfNotesFragment extends Fragment {
     private static final String TAG_DELETE = "TAG_DELETE";
     private ListOfNotesAdapter adapter;
     private INotesSource noteSource;
-    private GridLayoutManager layoutManager;
 
 
     public static ListOfNotesFragment newInstance() {
@@ -71,7 +70,8 @@ public class ListOfNotesFragment extends Fragment {
 
             @Override
             public void onDataDelete(int position) {
-                adapter.notifyItemRemoved(position);
+//                adapter.notifyItemRemoved(position);
+                adapter.notifyDataSetChanged();
             }
         });
         return view;
@@ -80,7 +80,7 @@ public class ListOfNotesFragment extends Fragment {
     private void initRecyclerView(RecyclerView recyclerView) {
         recyclerView.setHasFixedSize(true);
         setHasOptionsMenu(true);
-        layoutManager = new GridLayoutManager(getContext(), 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ListOfNotesAdapter();
         adapter.setRegisterViewListener(this::registerForContextMenu);
@@ -98,8 +98,8 @@ public class ListOfNotesFragment extends Fragment {
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v
             , ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, MENU_CHANGE_COLOR, 0, "change color");
-        menu.add(0, MENU_DELETE, 1, "delete");
+        menu.add(0, MENU_CHANGE_COLOR, 0, R.string.change_color);
+        menu.add(0, MENU_DELETE, 1, R.string.delete);
     }
 
     @Override
@@ -135,11 +135,11 @@ public class ListOfNotesFragment extends Fragment {
                 fragment.show(getParentFragmentManager(), TAG_EDIT_NOTE);
                 break;
             case R.id.menu_search:
-                Toast.makeText(requireContext(), "search", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), R.string.search, Toast.LENGTH_SHORT)
                         .show();
                 break;
             case R.id.menu_about:
-                Toast.makeText(requireContext(), "about", Toast.LENGTH_SHORT)
+                Toast.makeText(requireContext(), R.string.about, Toast.LENGTH_SHORT)
                         .show();
                 break;
         }
