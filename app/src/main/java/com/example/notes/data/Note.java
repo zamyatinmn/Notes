@@ -25,6 +25,13 @@ public class Note {
         color = new Random().nextInt(10);
     }
 
+    public Note() {
+        this.title = "";
+        this.text = "";
+        creationDate = new Date();
+        color = new Random().nextInt(10);
+    }
+
     public String getTitle() {
         return title;
     }
@@ -35,6 +42,10 @@ public class Note {
 
     public String getText() {
         return text;
+    }
+
+    public int getColor() {
+        return color;
     }
 
     public void setTitle(String title) {

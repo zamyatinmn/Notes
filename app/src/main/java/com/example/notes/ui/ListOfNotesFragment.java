@@ -1,7 +1,7 @@
 package com.example.notes.ui;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,24 +12,28 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notes.App;
+import com.example.notes.DataChangedListener;
 import com.example.notes.R;
 import com.example.notes.data.INotesSource;
-import com.example.notes.data.Note;
 import com.example.notes.data.NoteSourceFirebase;
 
 public class ListOfNotesFragment extends Fragment {
 
     private static final int MENU_DELETE = 123;
+    public static final String INDEX_KEY = "index";
+    private static final String TAG_EDIT_NOTE = "TAG_EDIT_NOTE";
+    private static final String TAG_DELETE = "TAG_DELETE";
     private ListOfNotesAdapter adapter;
     private INotesSource noteSource;
     private GridLayoutManager layoutManager;
-    private RecyclerView recyclerView;
+
 
     public static ListOfNotesFragment newInstance() {
         return new ListOfNotesFragment();
@@ -51,36 +55,41 @@ public class ListOfNotesFragment extends Fragment {
 
         ((App) requireActivity().getApplication()).notesSource = noteSource;
         adapter.setDataSource(noteSource);
+
+        noteSource.setOnChangedListener(new DataChangedListener() {
+            @Override
+            public void onDataAdd(int position) {
+                adapter.notifyItemInserted(position);
+            }
+
+            @Override
+            public void onDataUpdate(int position) {
+                adapter.notifyItemChanged(position);
+            }
+
+            @Override
+            public void onDataDelete(int position) {
+                adapter.notifyItemRemoved(position);
+            }
+        });
         return view;
     }
 
     private void initRecyclerView(RecyclerView recyclerView) {
         recyclerView.setHasFixedSize(true);
-        this.recyclerView = recyclerView;
         setHasOptionsMenu(true);
         layoutManager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(layoutManager);
-//        App app = (App) requireActivity().getApplication();
-//        noteSource = app.notesSource;
         adapter = new ListOfNotesAdapter();
-        boolean isLandscape = getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE;
         adapter.setRegisterViewListener(this::registerForContextMenu);
         adapter.setOnItemClickListener((view, position) ->
         {
-            if (isLandscape) {
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container2, CurrentNoteFragment.newInstance(position))
-                        .commit();
-            } else {
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, CurrentNoteFragment.newInstance(position))
-                        .commit();
-            }
+            DialogFragment fragment = new EditNoteDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt(INDEX_KEY, position);
+            fragment.setArguments(bundle);
+            fragment.show(getParentFragmentManager(), TAG_EDIT_NOTE);
         });
-
         recyclerView.setAdapter(adapter);
     }
 
@@ -93,11 +102,11 @@ public class ListOfNotesFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == MENU_DELETE) {
-            noteSource.remove(adapter.getPosition());
-//            Если использовать этот метод, позиции оставшихся вьюх не пересчитываются
-//            попадаю на OutOfBound
-//            adapter.notifyItemRemoved(adapter.getPosition());
-            adapter.notifyDataSetChanged();
+            DialogFragment dialog = new DeleteDialog();
+            Bundle bundle = new Bundle();
+            bundle.putInt(INDEX_KEY, adapter.getPosition());
+            dialog.setArguments(bundle);
+            dialog.show(getParentFragmentManager(), TAG_DELETE);
         }
         return super.onContextItemSelected(item);
     }
@@ -112,9 +121,8 @@ public class ListOfNotesFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_add:
-                noteSource.add(new Note("Новая заметка", "Текст новой заметки"));
-                adapter.notifyItemInserted(noteSource.size());
-                recyclerView.smoothScrollToPosition(noteSource.size() - 1);
+                DialogFragment fragment = new EditNoteDialogFragment();
+                fragment.show(getParentFragmentManager(), TAG_EDIT_NOTE);
                 break;
             case R.id.menu_search:
                 Toast.makeText(requireContext(), "search", Toast.LENGTH_SHORT)

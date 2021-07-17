@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="20dp"
     android:orientation="vertical">
 
     <EditText
@@ -26,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="15"
         android:gravity="start"
-        android:inputType="text"
+        android:inputType="textMultiLine"
         android:text="@string/text_example" />
 
 </LinearLayout>

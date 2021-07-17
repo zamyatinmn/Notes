@@ -7,10 +7,14 @@
     <string name="close">close</string>
     <string name="name">Maxim Zamyatin</string>
     <string name="text_in_header">This is my note application, im just a student\n.. sorry for bugs(=</string>
-    <string name="title_example">Заголовок</string>
+    <string name="title_example">Header</string>
     <string name="date_example">30.06.2021</string>
     <string name="text_example">Умные умные мысли их у меня много, не знаю даже где их оставить, положу, пожайлуй, здесь</string>
-    <string name="list">Список заметок</string>
-    <string name="change_color">Изменить цвет</string>
+    <string name="list">List of notes</string>
+    <string name="change_color">Change color</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="irrevocably_warning">The note will be deleted permanently</string>
+    <string name="cancel">cancel</string>
+    <string name="delete">delete</string>
 
 </resources>

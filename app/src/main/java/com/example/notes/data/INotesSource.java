@@ -1,5 +1,7 @@
 package com.example.notes.data;
 
+import com.example.notes.DataChangedListener;
+
 public interface INotesSource {
     INotesSource init(NoteSourceResponse response);
 
@@ -12,4 +14,6 @@ public interface INotesSource {
     void remove(int position);
 
     void update(int position, Note note);
+
+    void setOnChangedListener(DataChangedListener listener);
 }

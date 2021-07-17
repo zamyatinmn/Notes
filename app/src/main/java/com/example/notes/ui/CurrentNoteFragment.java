@@ -132,11 +132,11 @@ public class CurrentNoteFragment extends Fragment {
             boolean isLandscape = getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_LANDSCAPE;
             if (isLandscape) {
-                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container2
-                        , newInstance(index)).commit();
+//                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container2
+//                        , newInstance(index)).commit();
             } else {
-                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container
-                        , newInstance(index)).commit();
+//                getParentFragmentManager().beginTransaction().replace(R.id.fragment_container
+//                        , newInstance(index)).commit();
             }
         }
         return super.onOptionsItemSelected(item);

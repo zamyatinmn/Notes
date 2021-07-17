@@ -1,10 +1,13 @@
 package com.example.notes.data;
 
+import com.example.notes.DataChangedListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class NoteSourceSupernova implements INotesSource {
     private List<Note> dataSource;
+    private DataChangedListener listener;
 
     public NoteSourceSupernova() {
         dataSource = new ArrayList<>();
@@ -22,7 +25,7 @@ public class NoteSourceSupernova implements INotesSource {
         dataSource.add(new Note("Заметка 8", "Заметка восемьвосемь"));
         dataSource.add(new Note("Заметка 9", "Заметка девятьдевять"));
 
-        if (response != null){
+        if (response != null) {
             response.initialized(this);
         }
         return this;
@@ -35,11 +38,13 @@ public class NoteSourceSupernova implements INotesSource {
 
     @Override
     public void add(Note note) {
+        listener.onDataAdd(dataSource.size());
         dataSource.add(note);
     }
 
     @Override
     public void remove(int position) {
+        listener.onDataDelete(position);
         dataSource.remove(position);
     }
 
@@ -50,6 +55,12 @@ public class NoteSourceSupernova implements INotesSource {
 
     @Override
     public void update(int position, Note note) {
+        listener.onDataUpdate(position);
+        dataSource.set(position, note);
+    }
 
+    @Override
+    public void setOnChangedListener(DataChangedListener listener) {
+        this.listener = listener;
     }
 }
