@@ -71,8 +71,7 @@ public class ListOfNotesFragment extends Fragment {
 
             @Override
             public void onDataDelete(int position) {
-//                adapter.notifyItemRemoved(position);
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemRemoved(position);
             }
         });
         return view;
