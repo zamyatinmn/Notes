@@ -16,10 +16,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notes.App;
-import com.example.notes.data.DataChangedListener;
 import com.example.notes.R;
+import com.example.notes.data.DataChangedListener;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
 import com.example.notes.data.firebase.NoteSourceFirebase;
@@ -51,9 +52,17 @@ public class ListOfNotesFragment extends Fragment {
         animator.setAddDuration(1000);
         animator.setRemoveDuration(1000);
         recyclerView.setItemAnimator(animator);
+        SwipeRefreshLayout refresh = view.findViewById(R.id.refresh);
 
         noteSource = new NoteSourceFirebase()
-                .init(cardsData -> adapter.notifyDataSetChanged());
+                .init(cardsData -> {
+                    adapter.notifyDataSetChanged();
+                });
+
+        refresh.setOnRefreshListener(() -> noteSource.init(notesSource -> {
+            adapter.notifyDataSetChanged();
+            refresh.setRefreshing(false);
+        }));
 
         ((App) requireActivity().getApplication()).notesSource = noteSource;
         adapter.setDataSource(noteSource);
@@ -104,7 +113,7 @@ public class ListOfNotesFragment extends Fragment {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case MENU_CHANGE_COLOR:
                 Note note = noteSource.getNote(adapter.getPosition());
                 note.newColor();
