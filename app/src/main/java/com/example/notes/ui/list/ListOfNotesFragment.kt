@@ -1,157 +1,146 @@
-package com.example.notes.ui.list;
+package com.example.notes.ui.list
 
-import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+import android.os.Bundle
+import android.view.*
+import android.view.ContextMenu.ContextMenuInfo
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.notes.App
+import com.example.notes.ListItemClickListener
+import com.example.notes.R
+import com.example.notes.RegisterViewListener
+import com.example.notes.data.DataChangedListener
+import com.example.notes.data.INotesSource
+import com.example.notes.data.firebase.NoteSourceFirebase
+import com.example.notes.data.firebase.NoteSourceResponse
+import com.example.notes.ui.dialogs.DeleteDialog
+import com.example.notes.ui.dialogs.EditNoteDialogFragment
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+class ListOfNotesFragment : Fragment() {
+    private lateinit var adapter: ListOfNotesAdapter
+    private lateinit var noteSource: INotesSource
 
-import com.example.notes.App;
-import com.example.notes.R;
-import com.example.notes.data.DataChangedListener;
-import com.example.notes.data.INotesSource;
-import com.example.notes.data.Note;
-import com.example.notes.data.firebase.NoteSourceFirebase;
-import com.example.notes.ui.dialogs.DeleteDialog;
-import com.example.notes.ui.dialogs.EditNoteDialogFragment;
-
-public class ListOfNotesFragment extends Fragment {
-
-    private static final int MENU_CHANGE_COLOR = 321;
-    private static final int MENU_DELETE = 123;
-    public static final String INDEX_KEY = "index";
-    private static final String TAG_EDIT_NOTE = "TAG_EDIT_NOTE";
-    private static final String TAG_DELETE = "TAG_DELETE";
-    private ListOfNotesAdapter adapter;
-    private INotesSource noteSource;
-
-
-    public static ListOfNotesFragment newInstance() {
-        return new ListOfNotesFragment();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_of_notes, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        initRecyclerView(recyclerView);
-        DefaultItemAnimator animator = new DefaultItemAnimator();
-        animator.setAddDuration(1000);
-        animator.setRemoveDuration(1000);
-        recyclerView.setItemAnimator(animator);
-        SwipeRefreshLayout refresh = view.findViewById(R.id.refresh);
-
-        noteSource = new NoteSourceFirebase()
-                .init(cardsData -> {
-                    adapter.notifyDataSetChanged();
-                });
-
-        refresh.setOnRefreshListener(() -> noteSource.init(notesSource -> {
-            adapter.notifyDataSetChanged();
-            refresh.setRefreshing(false);
-        }));
-
-        ((App) requireActivity().getApplication()).notesSource = noteSource;
-        adapter.setDataSource(noteSource);
-
-        noteSource.setOnChangedListener(new DataChangedListener() {
-            @Override
-            public void onDataAdd(int position) {
-                adapter.notifyItemInserted(position);
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val view = inflater.inflate(R.layout.list_of_notes, container, false)
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+        initRecyclerView(recyclerView)
+        val animator = DefaultItemAnimator()
+        animator.addDuration = 1000
+        animator.removeDuration = 1000
+        recyclerView.itemAnimator = animator
+        val refresh: SwipeRefreshLayout = view.findViewById(R.id.refresh)
+        noteSource = NoteSourceFirebase().init(object : NoteSourceResponse{
+            override fun initialized(notesSource: INotesSource) {
+                adapter.notifyDataSetChanged()
             }
-
-            @Override
-            public void onDataUpdate(int position) {
-                adapter.notifyItemChanged(position);
-            }
-
-            @Override
-            public void onDataDelete(int position) {
-                adapter.notifyItemRemoved(position);
-            }
-        });
-        return view;
-    }
-
-    private void initRecyclerView(RecyclerView recyclerView) {
-        recyclerView.setHasFixedSize(true);
-        setHasOptionsMenu(true);
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new ListOfNotesAdapter();
-        adapter.setRegisterViewListener(this::registerForContextMenu);
-        adapter.setOnItemClickListener((view, position) ->
-        {
-            DialogFragment fragment = new EditNoteDialogFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt(INDEX_KEY, position);
-            fragment.setArguments(bundle);
-            fragment.show(getParentFragmentManager(), TAG_EDIT_NOTE);
-        });
-        recyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v
-            , ContextMenu.ContextMenuInfo menuInfo) {
-        menu.add(0, MENU_CHANGE_COLOR, 0, R.string.change_color);
-        menu.add(0, MENU_DELETE, 1, R.string.delete);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case MENU_CHANGE_COLOR:
-                Note note = noteSource.getNote(adapter.getPosition());
-                note.newColor();
-                noteSource.update(adapter.getPosition(), note);
-                break;
-            case MENU_DELETE:
-                DialogFragment dialog = new DeleteDialog();
-                Bundle bundle = new Bundle();
-                bundle.putInt(INDEX_KEY, adapter.getPosition());
-                dialog.setArguments(bundle);
-                dialog.show(getParentFragmentManager(), TAG_DELETE);
-                break;
+        })
+        refresh.setOnRefreshListener {
+            (noteSource as NoteSourceFirebase).init(object : NoteSourceResponse{
+                override fun initialized(notesSource: INotesSource) {
+                    adapter.notifyDataSetChanged()
+                    refresh.isRefreshing = false
+                }
+            })
         }
-        return super.onContextItemSelected(item);
+        (requireActivity().application as App).notesSource = noteSource
+        adapter.setDataSource(noteSource)
+        noteSource.setOnChangedListener(object : DataChangedListener {
+            override fun onDataAdd(position: Int) {
+                adapter.notifyItemInserted(position)
+            }
+
+            override fun onDataUpdate(position: Int) {
+                adapter.notifyItemChanged(position)
+            }
+
+            override fun onDataDelete(position: Int) {
+                adapter.notifyItemRemoved(position)
+            }
+        })
+        return view
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    private fun initRecyclerView(recyclerView: RecyclerView) {
+        recyclerView.setHasFixedSize(true)
+        setHasOptionsMenu(true)
+        val layoutManager = GridLayoutManager(context, 2)
+        recyclerView.layoutManager = layoutManager
+        adapter = ListOfNotesAdapter()
+        adapter.setRegisterViewListener(object : RegisterViewListener {
+            override fun registerView(view: View) {
+                registerForContextMenu(view)
+            }
+        })
+        adapter.setOnItemClickListener(object : ListItemClickListener {
+            override fun onClick(view: View, position: Int) {
+                val fragment: DialogFragment = EditNoteDialogFragment()
+                val bundle = Bundle()
+                bundle.putInt(INDEX_KEY, position)
+                fragment.arguments = bundle
+                fragment.show(parentFragmentManager, TAG_EDIT_NOTE)
+            }
+        })
+        recyclerView.adapter = adapter
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add:
-                DialogFragment fragment = new EditNoteDialogFragment();
-                fragment.show(getParentFragmentManager(), TAG_EDIT_NOTE);
-                break;
-            case R.id.menu_search:
-                Toast.makeText(requireContext(), R.string.search, Toast.LENGTH_SHORT)
-                        .show();
-                break;
-            case R.id.menu_about:
-                Toast.makeText(requireContext(), R.string.about, Toast.LENGTH_SHORT)
-                        .show();
-                break;
+    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
+        menu.add(0, MENU_CHANGE_COLOR, 0, R.string.change_color)
+        menu.add(0, MENU_DELETE, 1, R.string.delete)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            MENU_CHANGE_COLOR -> {
+                val note = noteSource.getNote(adapter.position)
+                note.newColor()
+                noteSource.update(adapter.position, note)
+            }
+            MENU_DELETE -> {
+                val dialog: DialogFragment = DeleteDialog()
+                val bundle = Bundle()
+                bundle.putInt(INDEX_KEY, adapter.position)
+                dialog.arguments = bundle
+                dialog.show(parentFragmentManager, TAG_DELETE)
+            }
         }
-        return super.onOptionsItemSelected(item);
+        return super.onContextItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_add -> {
+                val fragment: DialogFragment = EditNoteDialogFragment()
+                fragment.show(parentFragmentManager, TAG_EDIT_NOTE)
+            }
+            R.id.menu_search ->
+                Toast.makeText(requireContext(), R.string.search, Toast.LENGTH_SHORT).show()
+            R.id.menu_about ->
+                Toast.makeText(requireContext(), R.string.about, Toast.LENGTH_SHORT).show()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    companion object {
+        private const val MENU_CHANGE_COLOR = 321
+        private const val MENU_DELETE = 123
+        const val INDEX_KEY = "index"
+        private const val TAG_EDIT_NOTE = "TAG_EDIT_NOTE"
+        private const val TAG_DELETE = "TAG_DELETE"
+        fun newInstance(): ListOfNotesFragment {
+            return ListOfNotesFragment()
+        }
     }
 }

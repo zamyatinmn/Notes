@@ -1,70 +1,29 @@
-package com.example.notes.data;
+package com.example.notes.data
 
-import java.util.Date;
-import java.util.Random;
+import java.util.*
 
-public class Note {
-    private String id;
-    private String title;
-    private Date creationDate;
-    private String text;
-    public int color;
+class Note {
+    var id: String? = null
+    var title: String
+    var creationDate: Date
+    var text: String
+    var color = 0
 
-    public String getId() {
-        return id;
+    constructor(title: String, text: String) {
+        this.title = title
+        this.text = text
+        creationDate = Date()
+        newColor()
     }
 
-    public void setId(String id) {
-        this.id = id;
+    constructor() {
+        title = ""
+        text = ""
+        creationDate = Date()
+        newColor()
     }
 
-    public Note(String title, String text) {
-        this.title = title;
-        this.text = text;
-        creationDate = new Date();
-        newColor();
-    }
-
-    public Note() {
-        this.title = "";
-        this.text = "";
-        creationDate = new Date();
-        newColor();
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Date getCreationDate() {
-        return creationDate;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public int getColor() {
-        return color;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public void newColor() {
-        color = new Random().nextInt(10);
+    fun newColor() {
+        color = Random().nextInt(10)
     }
 }

@@ -1,75 +1,67 @@
-package com.example.notes.ui;
+package com.example.notes.ui
 
-import android.os.Bundle;
+import android.os.Bundle
+import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import com.example.notes.App
+import com.example.notes.R
+import com.example.notes.ui.list.ListOfNotesFragment
+import com.google.android.material.navigation.NavigationView
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+class MainActivity : AppCompatActivity() {
+    private lateinit var app: App
 
-import com.example.notes.App;
-import com.example.notes.R;
-import com.example.notes.ui.list.ListOfNotesFragment;
-import com.google.android.material.navigation.NavigationView;
-
-public class MainActivity extends AppCompatActivity {
-    private App app;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.drawer);
-        initDrawer();
-        createFragment(AuthFragment.newInstance());
-        app = (App) getApplication();
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.drawer)
+        initDrawer()
+        createFragment(AuthFragment.newInstance())
+        app = application as App
     }
 
-    private void createFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+    private fun createFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.fragment_container, fragment)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
     }
 
-    private void initDrawer() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.open, R.string.close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()){
-                case R.id.menu_list:
-                    if (app.isAuthorized){
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                                , ListOfNotesFragment.newInstance()).commit();
-                        drawer.closeDrawers();
-                        return true;
+    private fun initDrawer() {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar, R.string.open, R.string.close
+        )
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.menu_list -> {
+                    if (app.isAuthorized) {
+                        supportFragmentManager.beginTransaction().replace(
+                            R.id.fragment_container, ListOfNotesFragment.newInstance()
+                        ).commit()
+                        drawer.closeDrawers()
+                        true
                     }
-                    return false;
-                case R.id.menu_auth:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                            , AuthFragment.newInstance()).commit();
-                    drawer.closeDrawers();
-                    return true;
-                default:
-                    return false;
+                    false
+                }
+                R.id.menu_auth -> {
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.fragment_container, AuthFragment.newInstance()
+                    ).commit()
+                    drawer.closeDrawers()
+                    true
+                }
+                else -> false
             }
-//            if (item.getItemId() == R.id.menu_list) {
-//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-//                        , ListOfNotesFragment.newInstance()).commit();
-//                drawer.closeDrawers();
-//                return true;
-//            }
-//            return false;
-        });
+        }
     }
 }

@@ -1,79 +1,72 @@
-package com.example.notes.data.firebase;
+package com.example.notes.data.firebase
 
-import com.example.notes.data.DataChangedListener;
-import com.example.notes.data.INotesSource;
-import com.example.notes.data.Note;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.example.notes.data.DataChangedListener
+import com.example.notes.data.INotesSource
+import com.example.notes.data.Note
+import com.example.notes.data.firebase.NoteSourceFirebase
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.*
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+class NoteSourceFirebase : INotesSource {
+    private val firestore = FirebaseFirestore.getInstance()
+    private val reference = firestore.collection(NOTES_COLLECTION)
 
-public class NoteSourceFirebase implements INotesSource {
-    static String NOTES_COLLECTION = "notes";
-    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    CollectionReference reference = firestore.collection(NOTES_COLLECTION);
-    private List<Note> data = new ArrayList<>();
-    private DataChangedListener listener;
-
-    @Override
-    public NoteSourceFirebase init(NoteSourceResponse response) {
-        data = new ArrayList<>();
+    private var data: MutableList<Note> = ArrayList()
+    private var listener: DataChangedListener? = null
+    override fun init(response: NoteSourceResponse): NoteSourceFirebase {
+        data = ArrayList()
         reference.orderBy(NoteDataMapping.Fields.DATE, Query.Direction.DESCENDING).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        for (QueryDocumentSnapshot snap : task.getResult()) {
-                            Map<String, Object> map = snap.getData();
-                            String id = snap.getId();
-                            Note note = NoteDataMapping.toNote(id, map);
-                            data.add(note);
+            .addOnCompleteListener {
+                it.result?.let { result ->
+                    if (it.isSuccessful){
+                        for (snap in result) {
+                            val map = snap.data
+                            val id = snap.id
+                            val note = NoteDataMapping.toNote(id, map)
+                            data.add(note)
                         }
                     }
-                    response.initialized(NoteSourceFirebase.this);
-                });
-        return this;
+                }
+                response.initialized(this@NoteSourceFirebase)
+            }
+        return this
     }
 
-    @Override
-    public int size() {
-        if (data == null) {
-            return 0;
-        }
-        return data.size();
+    override fun size(): Int {
+        return data.size
     }
 
-    @Override
-    public void add(Note note) {
-        listener.onDataAdd(data.size());
-        data.add(note);
+    override fun add(note: Note) {
+        listener?.onDataAdd(data.size)
+        data.add(note)
         reference.add(NoteDataMapping.toDocument(note))
-                .addOnSuccessListener(documentReference -> note.setId(documentReference.getId()));
+            .addOnSuccessListener {
+                note.id = it.id
+            }
     }
 
-    @Override
-    public void update(int position, Note note) {
-        listener.onDataUpdate(position);
-        data.set(position, note);
-        reference.document(data.get(position).getId()).set(NoteDataMapping.toDocument(note));
+    override fun update(position: Int, note: Note) {
+        listener?.onDataUpdate(position)
+        data[position] = note
+        data[position].id?.let { reference.document(it).set(NoteDataMapping.toDocument(note)) }
     }
 
-    @Override
-    public void setOnChangedListener(DataChangedListener listener) {
-        this.listener = listener;
+    override fun setOnChangedListener(listener: DataChangedListener) {
+        this.listener = listener
     }
 
-    @Override
-    public void remove(int position) {
-        listener.onDataDelete(position);
-        reference.document(data.get(position).getId()).delete();
-        data.remove(position);
+    override fun remove(position: Int) {
+        listener?.onDataDelete(position)
+        data[position].id?.let { reference.document(it).delete() }
+        data.removeAt(position)
     }
 
-    @Override
-    public Note getNote(int position) {
-        return data.get(position);
+    override fun getNote(position: Int): Note {
+        return data[position]
+    }
+
+    companion object {
+        var NOTES_COLLECTION = "notes"
     }
 }

@@ -1,7 +1,7 @@
-package com.example.notes;
+package com.example.notes
 
-import android.view.View;
+import android.view.View
 
-public interface RegisterViewListener {
-    void registerView(View view);
+interface RegisterViewListener {
+    fun registerView(view: View)
 }

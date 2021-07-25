@@ -1,8 +1,7 @@
-package com.example.notes;
+package com.example.notes
 
-import android.view.View;
+import android.view.View
 
-public interface ListItemClickListener {
-    void onClick(View view, int position);
+interface ListItemClickListener {
+    fun onClick(view: View, position: Int)
 }
-

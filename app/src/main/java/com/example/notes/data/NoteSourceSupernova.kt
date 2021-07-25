@@ -1,66 +1,53 @@
-package com.example.notes.data;
+package com.example.notes.data
 
-import com.example.notes.data.firebase.NoteSourceResponse;
+import com.example.notes.data.firebase.NoteSourceResponse
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class NoteSourceSupernova implements INotesSource {
-    private List<Note> dataSource;
-    private DataChangedListener listener;
-
-    public NoteSourceSupernova() {
-        dataSource = new ArrayList<>();
+class NoteSourceSupernova : INotesSource {
+    private val dataSource: MutableList<Note>
+    private var listener: DataChangedListener? = null
+    override fun init(response: NoteSourceResponse): INotesSource {
+        dataSource.add(Note("Заметка 1", "Заметка разразразраз"))
+        dataSource.add(Note("Заметка 2", "Заметка двадвадвадва"))
+        dataSource.add(Note("Заметка 3", "Заметка тритритритри"))
+        dataSource.add(Note("Заметка 4", "Заметка четыречетыре"))
+        dataSource.add(Note("Заметка 5", "Заметка пятьпятьпять"))
+        dataSource.add(Note("Заметка 6", "Заметка шестьшесть"))
+        dataSource.add(Note("Заметка 7", "Заметка семьсемьсемь"))
+        dataSource.add(Note("Заметка 8", "Заметка восемьвосемь"))
+        dataSource.add(Note("Заметка 9", "Заметка девятьдевять"))
+        response.initialized(this)
+        return this
     }
 
-    @Override
-    public INotesSource init(NoteSourceResponse response) {
-        dataSource.add(new Note("Заметка 1", "Заметка разразразраз"));
-        dataSource.add(new Note("Заметка 2", "Заметка двадвадвадва"));
-        dataSource.add(new Note("Заметка 3", "Заметка тритритритри"));
-        dataSource.add(new Note("Заметка 4", "Заметка четыречетыре"));
-        dataSource.add(new Note("Заметка 5", "Заметка пятьпятьпять"));
-        dataSource.add(new Note("Заметка 6", "Заметка шестьшесть"));
-        dataSource.add(new Note("Заметка 7", "Заметка семьсемьсемь"));
-        dataSource.add(new Note("Заметка 8", "Заметка восемьвосемь"));
-        dataSource.add(new Note("Заметка 9", "Заметка девятьдевять"));
-
-        if (response != null) {
-            response.initialized(this);
-        }
-        return this;
+    override fun size(): Int {
+        return dataSource.size
     }
 
-    @Override
-    public int size() {
-        return dataSource.size();
+    override fun add(note: Note) {
+        listener?.onDataAdd(dataSource.size)
+        dataSource.add(note)
     }
 
-    @Override
-    public void add(Note note) {
-        listener.onDataAdd(dataSource.size());
-        dataSource.add(note);
+    override fun remove(position: Int) {
+        listener?.onDataDelete(position)
+        dataSource.removeAt(position)
     }
 
-    @Override
-    public void remove(int position) {
-        listener.onDataDelete(position);
-        dataSource.remove(position);
+    override fun getNote(position: Int): Note {
+        return dataSource[position]
     }
 
-    @Override
-    public Note getNote(int position) {
-        return dataSource.get(position);
+    override fun update(position: Int, note: Note) {
+        listener?.onDataUpdate(position)
+        dataSource[position] = note
     }
 
-    @Override
-    public void update(int position, Note note) {
-        listener.onDataUpdate(position);
-        dataSource.set(position, note);
+    override fun setOnChangedListener(listener: DataChangedListener) {
+        this.listener = listener
     }
 
-    @Override
-    public void setOnChangedListener(DataChangedListener listener) {
-        this.listener = listener;
+    init {
+        dataSource = ArrayList()
     }
 }

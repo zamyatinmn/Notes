@@ -1,19 +1,13 @@
-package com.example.notes.data;
+package com.example.notes.data
 
-import com.example.notes.data.firebase.NoteSourceResponse;
+import com.example.notes.data.firebase.NoteSourceResponse
 
-public interface INotesSource {
-    INotesSource init(NoteSourceResponse response);
-
-    Note getNote(int position);
-
-    int size();
-
-    void add(Note note);
-
-    void remove(int position);
-
-    void update(int position, Note note);
-
-    void setOnChangedListener(DataChangedListener listener);
+interface INotesSource {
+    fun init(response: NoteSourceResponse): INotesSource
+    fun getNote(position: Int): Note
+    fun size(): Int
+    fun add(note: Note)
+    fun remove(position: Int)
+    fun update(position: Int, note: Note)
+    fun setOnChangedListener(listener: DataChangedListener)
 }
