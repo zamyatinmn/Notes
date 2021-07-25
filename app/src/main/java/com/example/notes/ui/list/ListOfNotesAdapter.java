@@ -1,4 +1,4 @@
-package com.example.notes.ui;
+package com.example.notes.ui.list;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,11 +62,11 @@ public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.getDate().setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(currentNote.getCreationDate()));
         holder.getText().setText(currentNote.getText());
         holder.itemView.setOnLongClickListener(view -> {
-            setPosition(position);
+            setPosition( holder.getAdapterPosition());
             viewListener.registerView(holder.itemView);
             return false;
         });
-        holder.itemView.setOnClickListener(view -> listener.onClick(view, position));
+        holder.itemView.setOnClickListener(view -> listener.onClick(view, holder.getAdapterPosition()));
     }
 
     @Override

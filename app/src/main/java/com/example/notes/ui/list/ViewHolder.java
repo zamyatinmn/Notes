@@ -1,4 +1,4 @@
-package com.example.notes.ui;
+package com.example.notes.ui.list;
 
 import android.view.View;
 import android.widget.LinearLayout;

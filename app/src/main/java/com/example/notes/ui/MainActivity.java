@@ -1,6 +1,5 @@
 package com.example.notes.ui;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -12,36 +11,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.notes.R;
+import com.example.notes.ui.list.ListOfNotesFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
-
-    protected boolean isLandscape = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer);
         initDrawer();
-        isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        if (isLandscape) {
-            showLand();
-        } else {
-            showPort(ListOfNotesFragment.newInstance());
-        }
-
+        createFragment(ListOfNotesFragment.newInstance());
     }
 
-    private void showLand() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, ListOfNotesFragment.newInstance());
-        fragmentTransaction.replace(R.id.fragment_container2, CurrentNoteFragment.newInstance(0));
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-    }
-
-    private void showPort(Fragment fragment) {
+    private void createFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
