@@ -7,6 +7,7 @@ import com.example.notes.data.firebase.NoteSourceFirebase;
 
 public class App extends Application {
     public INotesSource notesSource;
+    public boolean isAuthorized = false;
 
     @Override
     public void onCreate() {

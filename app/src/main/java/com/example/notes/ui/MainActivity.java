@@ -10,18 +10,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.notes.App;
 import com.example.notes.R;
 import com.example.notes.ui.list.ListOfNotesFragment;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
+    private App app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer);
         initDrawer();
-        createFragment(ListOfNotesFragment.newInstance());
+        createFragment(AuthFragment.newInstance());
+        app = (App) getApplication();
     }
 
     private void createFragment(Fragment fragment) {
@@ -43,13 +46,30 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.menu_list) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
-                        , ListOfNotesFragment.newInstance()).commit();
-                drawer.closeDrawers();
-                return true;
+            switch (item.getItemId()){
+                case R.id.menu_list:
+                    if (app.isAuthorized){
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                                , ListOfNotesFragment.newInstance()).commit();
+                        drawer.closeDrawers();
+                        return true;
+                    }
+                    return false;
+                case R.id.menu_auth:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+                            , AuthFragment.newInstance()).commit();
+                    drawer.closeDrawers();
+                    return true;
+                default:
+                    return false;
             }
-            return false;
+//            if (item.getItemId() == R.id.menu_list) {
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container
+//                        , ListOfNotesFragment.newInstance()).commit();
+//                drawer.closeDrawers();
+//                return true;
+//            }
+//            return false;
         });
     }
 }

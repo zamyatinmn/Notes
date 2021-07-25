@@ -16,5 +16,8 @@
     <string name="irrevocably_warning">The note will be deleted permanently</string>
     <string name="cancel">cancel</string>
     <string name="delete">delete</string>
+    <string name="continue_btn_text">continue</string>
+    <string name="sign_out">sign out</string>
+    <string name="authentication">Authentication</string>
 
 </resources>
