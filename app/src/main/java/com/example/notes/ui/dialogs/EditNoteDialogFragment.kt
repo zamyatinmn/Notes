@@ -100,7 +100,7 @@ class EditNoteDialogFragment : DialogFragment() {
         note.title = title.text.toString()
         try {
             note.creationDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                .parse(date.text.toString())
+                .parse(date.text.toString())?:Date(0)
         } catch (e: ParseException) {
             e.printStackTrace()
         }

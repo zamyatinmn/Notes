@@ -9,7 +9,7 @@ object NoteDataMapping {
         val title = (document[Fields.TITLE] as String?)?: "null"
         val text = (document[Fields.TEXT] as String?)?: "null"
         val date = (document[Fields.DATE] as Timestamp?)?: Timestamp(0, 0)
-        val tempColor = (document[Fields.COLOR] as Long?)?: 123456L
+        val tempColor = (document[Fields.COLOR] as Long?)?: 1L
         val color = tempColor.toInt()
         val note = Note(title, text)
         note.creationDate = date.toDate()
