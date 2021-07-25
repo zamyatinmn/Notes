@@ -1,4 +1,4 @@
-package com.example.notes.ui;
+package com.example.notes.ui.list;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +13,9 @@ import com.example.notes.RegisterViewListener;
 import com.example.notes.data.INotesSource;
 import com.example.notes.data.Note;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private INotesSource dataSource;
@@ -21,8 +24,9 @@ public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
     private RegisterViewListener viewListener;
     private int position = 0;
 
-    public ListOfNotesAdapter(INotesSource dataSource) {
+    public void setDataSource(INotesSource dataSource){
         this.dataSource = dataSource;
+        notifyDataSetChanged();
     }
 
     public int getPosition() {
@@ -55,14 +59,14 @@ public class ListOfNotesAdapter extends RecyclerView.Adapter<ViewHolder> {
         int[] colors = holder.itemView.getResources().getIntArray(R.array.colors);
         holder.getLinear().setBackgroundColor(colors[currentNote.color]);
         holder.getTitle().setText(currentNote.getTitle());
-        holder.getDate().setText(currentNote.getCreationDate());
+        holder.getDate().setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(currentNote.getCreationDate()));
         holder.getText().setText(currentNote.getText());
         holder.itemView.setOnLongClickListener(view -> {
-            setPosition(position);
+            setPosition( holder.getAdapterPosition());
             viewListener.registerView(holder.itemView);
             return false;
         });
-        holder.itemView.setOnClickListener(view -> listener.onClick(view, position));
+        holder.itemView.setOnClickListener(view -> listener.onClick(view, holder.getAdapterPosition()));
     }
 
     @Override

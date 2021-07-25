@@ -18,6 +18,7 @@
     <color name="purple_heart">#623DF5</color>
     <color name="heliotrope">#B23DF5</color>
     <color name="razzle_dazzle_rose">#F53DEF</color>
+    <color name="transparent">#00000000</color>
 
     <array name="colors">
         <item>@color/amber</item>
