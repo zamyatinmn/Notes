@@ -6,4 +6,9 @@
         android:orderInCategory="10"
         android:title="@string/list" />
 
+    <item
+        android:id="@+id/menu_auth"
+        android:orderInCategory="100"
+        android:title="@string/authentication" />
+
 </menu>
